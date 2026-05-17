@@ -1,0 +1,14 @@
+TITLE=Lunar Spoofer V2.4 Release
+DATE=May 17, 2026
+ICON=spoofer
+TEXT=We are excited to release the major V2.4 update of Lunar Spoofer! This update brings standard kernel virtualization optimizations, enhanced HWID cleaning support, and improved overall app stability. Standard spoofing is now fully compatible with the latest Windows 11 updates. Enjoy spoofing without compromises!
+---
+TITLE=Important System Maintenance
+DATE=May 15, 2026
+ICON=home
+TEXT=Scheduled server maintenance is completed. Our backend systems have been completely optimized to reduce connection latency and ensure faster dynamic loading of active accounts and keys.
+---
+TITLE=New Dynamic News System Live
+DATE=May 12, 2026
+ICON=logo
+TEXT=We have successfully deployed our new dynamic GitHub announcement loader. From now on, you will see real-time updates and announcements directly inside the launcher dashboard. Stay tuned for future product updates!
